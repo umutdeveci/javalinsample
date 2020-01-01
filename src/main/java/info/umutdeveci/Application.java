@@ -1,5 +1,6 @@
 package info.umutdeveci;
 
+import info.umutdeveci.plugin.ExceptionHandlerPlugin;
 import io.javalin.Javalin;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
@@ -11,7 +12,10 @@ public class Application {
 
     public static void main(String[] args) {
         final Javalin app = Javalin
-            .create(config -> config.registerPlugin(new OpenApiPlugin(createOpenApiOptions())))
+            .create(config -> {
+                config.registerPlugin(new OpenApiPlugin(createOpenApiOptions()));
+                config.registerPlugin(new ExceptionHandlerPlugin());
+            })
             .start(8080);
         app.get("/", ctx -> ctx.result("Hello World"));
     }
