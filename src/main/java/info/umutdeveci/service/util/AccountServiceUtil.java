@@ -19,7 +19,7 @@ public class AccountServiceUtil {
             .build();
     }
 
-    public static void checkAmountNotNegative(final BigDecimal amount) {
+    public static void checkAmountGreaterThanZero(final BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new Problem(HttpStatus.BAD_REQUEST_400, "Amount can not be less than or equal to zero.");
         }

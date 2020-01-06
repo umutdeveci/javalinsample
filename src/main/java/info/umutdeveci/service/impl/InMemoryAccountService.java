@@ -1,6 +1,6 @@
 package info.umutdeveci.service.impl;
 
-import static info.umutdeveci.service.util.AccountServiceUtil.checkAmountNotNegative;
+import static info.umutdeveci.service.util.AccountServiceUtil.checkAmountGreaterThanZero;
 import static info.umutdeveci.service.util.AccountServiceUtil.convertToAccount;
 
 import info.umutdeveci.exception.Problem;
@@ -112,7 +112,7 @@ public class InMemoryAccountService implements AccountService {
     }
 
     private void withdrawInternal(@NonNull final AccountEntity entity, @NonNull final BigDecimal amount) {
-        checkAmountNotNegative(amount);
+        checkAmountGreaterThanZero(amount);
 
         final BigDecimal newBalance = entity.getBalance().subtract(amount);
 
@@ -124,7 +124,7 @@ public class InMemoryAccountService implements AccountService {
     }
 
     private void depositInternal(@NonNull final AccountEntity entity, @NonNull final BigDecimal amount) {
-        checkAmountNotNegative(amount);
+        checkAmountGreaterThanZero(amount);
         final BigDecimal newBalance = entity.getBalance().add(amount);
         entity.setBalance(newBalance);
     }

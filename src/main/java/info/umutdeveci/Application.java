@@ -5,16 +5,20 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import info.umutdeveci.controller.AccountController;
 import info.umutdeveci.plugin.ExceptionHandlerPlugin;
 import info.umutdeveci.service.AccountService;
 import info.umutdeveci.service.entity.AccountEntity;
 import info.umutdeveci.service.impl.InMemoryAccountService;
 import io.javalin.Javalin;
+import io.javalin.plugin.json.JavalinJackson;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.swagger.v3.oas.models.info.Info;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public class Application {
 
     public static void main(String[] args) {
+        final ObjectMapper mapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        JavalinJackson.configure(mapper);
+
         final AccountService accountService = initializeAccountService();
         final AccountController accountController = new AccountController(accountService);
 
