@@ -30,12 +30,12 @@ import org.eclipse.jetty.http.HttpStatus;
  * jdbc for this simple project.
  */
 @Slf4j
-public class InMemoryAccountServiceImpl implements AccountService {
+public class InMemoryAccountService implements AccountService {
 
     private Map<String, AccountEntity> repository;
     private Lock lock = new ReentrantLock(true);
 
-    public InMemoryAccountServiceImpl(@NonNull final List<AccountEntity> accountEntities) {
+    public InMemoryAccountService(@NonNull final List<AccountEntity> accountEntities) {
         this.repository = new HashMap<>(accountEntities.size());
         accountEntities.forEach(accountEntity -> repository.put(accountEntity.getAccountNumber(), accountEntity));
     }
@@ -83,6 +83,10 @@ public class InMemoryAccountServiceImpl implements AccountService {
         return doWithLock(() -> {
             if (fromAccountNumber.equalsIgnoreCase(toAccountNumber)) {
                 throw new Problem(HttpStatus.BAD_REQUEST_400, "Can not transfer between same accounts");
+            }
+
+            if (amount.equals(BigDecimal.ZERO)) {
+                throw new Problem(HttpStatus.BAD_REQUEST_400, "Amount should not be zero");
             }
 
             final AccountEntity fromEntity = getInternal(fromAccountNumber);

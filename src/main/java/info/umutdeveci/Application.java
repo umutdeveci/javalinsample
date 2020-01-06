@@ -9,8 +9,7 @@ import info.umutdeveci.controller.AccountController;
 import info.umutdeveci.plugin.ExceptionHandlerPlugin;
 import info.umutdeveci.service.AccountService;
 import info.umutdeveci.service.entity.AccountEntity;
-import info.umutdeveci.service.impl.InMemoryAccountServiceImpl;
-import info.umutdeveci.util.Utils;
+import info.umutdeveci.service.impl.InMemoryAccountService;
 import io.javalin.Javalin;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
@@ -60,6 +59,6 @@ public class Application {
 
     private static AccountService initializeAccountService() {
         final List<AccountEntity> randomAccounts = generateRandomAccounts(50);
-        return new InMemoryAccountServiceImpl(randomAccounts);
+        return new InMemoryAccountService(randomAccounts);
     }
 }
