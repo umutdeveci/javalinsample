@@ -5,6 +5,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import info.umutdeveci.controller.AccountController;
@@ -18,7 +19,6 @@ import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.swagger.v3.oas.models.info.Info;
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 public class Application {
 
     public static void main(String[] args) {
-        final ObjectMapper mapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        final ObjectMapper mapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+            .setDefaultPropertyInclusion(Include.NON_NULL);
+
         JavalinJackson.configure(mapper);
 
         final AccountService accountService = initializeAccountService();
@@ -34,7 +37,7 @@ public class Application {
 
         final Javalin app = Javalin
             .create(config -> {
-                config.registerPlugin(new OpenApiPlugin(createOpenApiOptions()));
+                config.registerPlugin(new OpenApiPlugin(createOpenApiOptions(mapper)));
                 config.registerPlugin(new ExceptionHandlerPlugin());
                 config.defaultContentType = "application/json";
             }).routes(() -> {
@@ -52,7 +55,7 @@ public class Application {
         app.start(8080);
     }
 
-    private static OpenApiOptions createOpenApiOptions() {
+    private static OpenApiOptions createOpenApiOptions(final ObjectMapper mapper) {
         final Info applicationInfo = new Info()
             .title("Account API")
             .version("1.0")
@@ -60,6 +63,7 @@ public class Application {
                 "A simple API that provides account information, withdrawal/deposit operations and transfers between"
                     + "  accounts. For simplicity sake, all accounts considered to have same currency.");
         return new OpenApiOptions(applicationInfo)
+            .jacksonMapper(mapper)
             .path("/swagger-docs")
             .swagger(new SwaggerOptions("/swagger-ui"));
     }
