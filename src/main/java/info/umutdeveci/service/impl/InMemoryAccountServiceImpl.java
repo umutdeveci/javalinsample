@@ -1,5 +1,8 @@
 package info.umutdeveci.service.impl;
 
+import static info.umutdeveci.service.util.AccountServiceUtil.checkAmountNotNegative;
+import static info.umutdeveci.service.util.AccountServiceUtil.convertToAccount;
+
 import info.umutdeveci.exception.Problem;
 import info.umutdeveci.model.Account;
 import info.umutdeveci.service.AccountService;
@@ -48,7 +51,7 @@ public class InMemoryAccountServiceImpl implements AccountService {
     public Account get(@NonNull final String accountNumber) {
         return doWithLock(() -> {
             final AccountEntity entity = getInternal(accountNumber);
-            return AccountServiceUtil.convertToAccount(entity);
+            return convertToAccount(entity);
         });
     }
 
@@ -59,7 +62,7 @@ public class InMemoryAccountServiceImpl implements AccountService {
 
             withdrawInternal(entity, amount);
 
-            return AccountServiceUtil.convertToAccount(entity);
+            return convertToAccount(entity);
         });
     }
 
@@ -70,7 +73,7 @@ public class InMemoryAccountServiceImpl implements AccountService {
 
             depositInternal(entity, amount);
 
-            return AccountServiceUtil.convertToAccount(entity);
+            return convertToAccount(entity);
         });
     }
 
@@ -89,8 +92,8 @@ public class InMemoryAccountServiceImpl implements AccountService {
             depositInternal(toEntity, amount);
 
             return TransferResult.builder()
-                .fromAccount(AccountServiceUtil.convertToAccount(fromEntity))
-                .toAccount(AccountServiceUtil.convertToAccount(toEntity))
+                .fromAccount(convertToAccount(fromEntity))
+                .toAccount(convertToAccount(toEntity))
                 .build();
         });
     }
@@ -105,7 +108,7 @@ public class InMemoryAccountServiceImpl implements AccountService {
     }
 
     private void withdrawInternal(@NonNull final AccountEntity entity, @NonNull final BigDecimal amount) {
-        AccountServiceUtil.checkAmountNotNegative(amount);
+        checkAmountNotNegative(amount);
 
         final BigDecimal newBalance = entity.getBalance().subtract(amount);
 
@@ -117,7 +120,7 @@ public class InMemoryAccountServiceImpl implements AccountService {
     }
 
     private void depositInternal(@NonNull final AccountEntity entity, @NonNull final BigDecimal amount) {
-        AccountServiceUtil.checkAmountNotNegative(amount);
+        checkAmountNotNegative(amount);
         final BigDecimal newBalance = entity.getBalance().add(amount);
         entity.setBalance(newBalance);
     }

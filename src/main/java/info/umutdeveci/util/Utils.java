@@ -14,7 +14,7 @@ public class Utils {
     }
 
     public static List<AccountEntity> generateRandomAccounts(final int size) {
-        return ThreadLocalRandom.current().doubles(size, 0, 1000)
+        return ThreadLocalRandom.current().doubles(size, 0, 7500)
             .mapToObj(random -> new AccountEntity(UUID.randomUUID().toString(),
                 new BigDecimal(random).setScale(2, RoundingMode.DOWN)))
             .collect(Collectors.toList());
